@@ -7,6 +7,9 @@ import com.sudeep.banking_app.repository.AccountRepository;
 import com.sudeep.banking_app.service.AccountService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class AccountServiceimpl implements AccountService {
 
@@ -56,4 +59,13 @@ public class AccountServiceimpl implements AccountService {
         Account savedAccount =  accountRepository.save(account);
         return AccountMapper.mapToAccountdto(savedAccount);
     }
+
+    @Override
+    public List<Accountdto> getAllAccounts() {
+       List<Account> accounts= accountRepository.findAll();
+      return accounts.stream().map((account) -> AccountMapper.mapToAccountdto(account))
+               .collect(Collectors.toList());
+
+    }
+
 }
