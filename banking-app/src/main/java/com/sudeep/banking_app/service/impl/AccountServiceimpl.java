@@ -2,6 +2,7 @@ package com.sudeep.banking_app.service.impl;
 
 import com.sudeep.banking_app.dto.Accountdto;
 import com.sudeep.banking_app.entity.Account;
+import com.sudeep.banking_app.exception.ResourceNotFoundException;
 import com.sudeep.banking_app.mapper.AccountMapper;
 import com.sudeep.banking_app.repository.AccountRepository;
 import com.sudeep.banking_app.service.AccountService;
@@ -27,17 +28,15 @@ public class AccountServiceimpl implements AccountService {
         return AccountMapper.mapToAccountdto(savedAccount);
     }
     @Override
-    public Accountdto GetAccountById(Long id){
-        Account account = accountRepository
-                .findById(id)
-                .orElseThrow(()-> new RuntimeException("No Such Account Exist"));
+    public Accountdto getAccountById(Long id){
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with ID: " + id));
         return AccountMapper.mapToAccountdto(account);
     }
     @Override
     public Accountdto deposit(Long id, double amount){
-        Account account = accountRepository
-                .findById(id)
-                .orElseThrow(()-> new RuntimeException("No Such Account Exist"));
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with ID: " + id));
        double total = account.getBalance() + amount;
        account.setBalance(total);
        Account savedAccount =  accountRepository.save(account);
@@ -45,9 +44,8 @@ public class AccountServiceimpl implements AccountService {
     }
     @Override
     public Accountdto withdraw(Long id, double amount){
-        Account account = accountRepository
-                .findById(id)
-                .orElseThrow(()-> new RuntimeException("No Such Account Exist"));
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with ID: " + id));
         double total;
         if(account.getBalance()>amount) {
             total = account.getBalance() - amount;
@@ -65,6 +63,15 @@ public class AccountServiceimpl implements AccountService {
        List<Account> accounts= accountRepository.findAll();
       return accounts.stream().map((account) -> AccountMapper.mapToAccountdto(account))
                .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public void deleteAccount(Long id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with ID: " + id));
+
+        accountRepository.deleteById(id);
 
     }
 

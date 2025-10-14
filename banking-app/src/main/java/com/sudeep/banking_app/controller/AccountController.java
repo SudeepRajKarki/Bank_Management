@@ -28,7 +28,7 @@ public class AccountController {
     //get account by id
     @GetMapping("/{id}")
     public ResponseEntity<Accountdto> getAccountById(@PathVariable Long id){
-        Accountdto accountdto = accountService.GetAccountById(id);
+        Accountdto accountdto = accountService.getAccountById(id);
         return ResponseEntity.ok(accountdto);
     }
     //deposit the amount in the account
@@ -53,6 +53,12 @@ public class AccountController {
     public ResponseEntity<List<Accountdto>> getAllAccount(){
         List<Accountdto> accounts=accountService.getAllAccounts();
         return ResponseEntity.ok(accounts);
+    }
+    //delete account REST api
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<String> deleteAccount(@PathVariable Long id){
+        accountService.deleteAccount(id);
+        return ResponseEntity.ok("Account deleted successfully");
     }
 
 }
