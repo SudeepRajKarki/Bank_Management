@@ -1,0 +1,76 @@
+# ----------------------------------------
+# Java and Spring Boot
+# ----------------------------------------
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+
+# Spring Boot specific
+target/
+build/
+out/
+logs/
+!src/main/resources/static/
+!src/main/resources/templates/
+
+# ----------------------------------------
+# IDEs and Editors
+# ----------------------------------------
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# ----------------------------------------
+# OS generated files
+# ----------------------------------------
+.DS_Store
+Thumbs.db
+
+# ----------------------------------------
+# Environment and Config Files
+# ----------------------------------------
+.env
+application-*.yml
+application-*.yaml
+application-*.properties
+
+# ----------------------------------------
+# Logs and temporary files
+# ----------------------------------------
+*.log
+*.tmp
+*.swp
+*.bak
+
+# ----------------------------------------
+# Maven & Gradle
+# ----------------------------------------
+
+# Maven
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+
+
+
