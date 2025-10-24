@@ -1,5 +1,6 @@
 import { useState,useEffect } from "react";
 import axios from 'axios'
+import './Style.css'
 
 
 function Account(){
@@ -10,7 +11,6 @@ function Account(){
     const FetchAccounts=async ()=>{
         try{
         const response = await axios.get("http://localhost:8080/api/accounts")
-        console.log("response from backend",response.data);
         setAccounts(response.data)
         }
         catch(error){
@@ -22,10 +22,18 @@ function Account(){
     useEffect(()=>{
         FetchAccounts();
     },[]);
+    const nameRegex = /^[A-Za-z]+$/;
 
     const HandleSubmit= async(e)=>{
         e.preventDefault();
-        
+        if (!newAccount.accountHolderName.trim() || newAccount.balance === "") {
+           alert("Please fill in both fields before submitting.");
+           return;
+          }
+        if(!nameRegex.test(newAccount.accountHolderName)){
+            alert("Names should be alphabet");
+            return;
+        }
         try{
            await axios.post("http://localhost:8080/api/accounts",newAccount)
             setnewAccount({accountHolderName:"",balance:""})
@@ -46,40 +54,39 @@ function Account(){
                 console.error("Failed to delete Accounts",error);
             }
         }
-
-        
-
-
     
      return(
         <>
         <p>Create a new Account</p>
+        <section  className="form">
         <form onSubmit={HandleSubmit}>
             <input
              type="text" 
              placeholder="Enter Your Name" 
-            value={newAccount.accountHolderName} 
-            onChange={(e)=>
-            setnewAccount({...newAccount,accountHolderName:e.target.value})}
+             value={newAccount.accountHolderName} 
+             onChange={(e)=>
+             setnewAccount({...newAccount,accountHolderName:e.target.value})}
             />
-            <input type="number" placeholder="Enter Your Balance" 
-            value={newAccount.balance} 
-            onChange={(e)=>
-            setnewAccount({...newAccount,balance:e.target.value})}
+            <input type="number"
+             placeholder="Enter Your Balance" 
+             value={newAccount.balance} 
+             onChange={(e)=>
+             setnewAccount({...newAccount,balance:e.target.value})}
             />
-        <button type="Submit">Add Account</button>
+        <button type="submit">Add Account</button>
         </form>
+        </section>
         <h1>Account List</h1>
         <div className="Container">
         {accounts.length==0 ? (<p>no accounts yet</p>):(
         <ul>
             {accounts.map((p)=>(
                 
-            <li key={p.id}>
-                <strong>Name:{p.accountHolderName}</strong>
-                Balance:{p.balance}
+            <li key={p.id} className="block">
+               <p><strong>Name:{p.accountHolderName}</strong></p>
+               <p>Balance:{p.balance}</p>
                 &nbsp;
-                <button onClick={()=>HandleDelete(p.id)}>Delete</button>
+                <p><button onClick={()=>HandleDelete(p.id)}>Delete</button></p>
             </li>
         ))}
 
