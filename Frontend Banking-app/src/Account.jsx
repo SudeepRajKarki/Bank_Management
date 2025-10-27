@@ -7,6 +7,8 @@ function Account(){
 
     const[accounts,setAccounts]=useState([]);
     const[newAccount,setnewAccount]=useState({accountHolderName:"",balance:""});
+    const[amounts,setamounts] =useState({});
+
 
     const FetchAccounts=async ()=>{
         try{
@@ -43,6 +45,7 @@ function Account(){
             console.error("Failed to add new Account",error);
         }
         }
+
     const HandleDelete=async (id)=>{
         const ConfirmDelete=window.confirm("Are you sure want to delete your account?");
         if(!ConfirmDelete) return;
@@ -54,10 +57,51 @@ function Account(){
                 console.error("Failed to delete Accounts",error);
             }
         }
+
+    const HandleDeposit = async(id)=>{
+        const amt =parseFloat(amounts[id]);
+        if(isNaN(amt) || amt < 0){
+            alert("please enter a valid amount");
+            return;
+        }
+        try{
+           await axios.put(`http://localhost:8080/api/accounts/${id}/deposit`,{
+                amount:amt });
+            FetchAccounts();
+            setamounts({...amounts , [id]:""});
+        }
+        catch(error){
+            console.log("Deposit Failed");
+        }
+    }
+    const HandleWithdraw =async(id)=>{
+        const amt = parseFloat(amounts[id]);
+        const account = accounts.find((a)=> a.id===id);
+
+        if(isNaN(amt) || amt <= 0){
+            alert("Enter a valid number");
+            return;
+        }
+        if(amt > account.balance){
+            alert("Enter the valid amount that can be withdrawn");
+            return;
+        }
+        try{
+            await axios.put(`http://localhost:8080/api/accounts/${id}/withdraw`,{
+                amount:amt
+            });
+            FetchAccounts();
+            setamounts({...amounts,[id]:""});
+        }
+        catch(error){
+            console.error("Withdraw Failed",error);
+        }
+
+    }
     
      return(
         <>
-        <p>Create a new Account</p>
+        <p className="cre">Create a new Account</p>
         <section  className="form">
         <form onSubmit={HandleSubmit}>
             <input
@@ -85,8 +129,21 @@ function Account(){
             <li key={p.id} className="block">
                <p><strong>Name:{p.accountHolderName}</strong></p>
                <p>Balance:{p.balance}</p>
+               <input
+               type="number"
+               placeholder="Enter amount to withdraw/deposit"
+               onChange={(e)=>
+                setamounts({...amounts,[p.id]:e.target.value})
+               }
+
+               />
                 &nbsp;
-                <p><button onClick={()=>HandleDelete(p.id)}>Delete</button></p>
+                <button className="button delete-btn" onClick={()=>HandleDelete(p.id)}>Delete</button>
+                &nbsp;
+                <button className="button deposit-btn" onClick={()=>HandleDeposit(p.id)}>Deposit</button>
+                &nbsp;
+                <button className="button withdraw-btn" onClick={()=>HandleWithdraw(p.id)}>Withdraw</button>
+
             </li>
         ))}
 
